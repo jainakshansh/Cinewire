@@ -28,4 +28,5 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.vipulasri:ticketview:1.0.5'
+    implementation 'com.android.volley:volley:1.1.0'
 }

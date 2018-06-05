@@ -29,7 +29,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private static final int LIST_ITEM = 100;
     private static final int GRID_ITEM = 101;
-    boolean isGrid = false;
+    boolean isGrid = true;
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
         ImageView moviePoster;
@@ -86,7 +86,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     public boolean toggleViewType() {
-        return !isGrid;
+        isGrid = !isGrid;
+        return isGrid;
     }
 
     @Override
