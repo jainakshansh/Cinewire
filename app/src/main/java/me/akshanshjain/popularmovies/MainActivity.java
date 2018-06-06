@@ -39,8 +39,11 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView moviesRecycler;
     private MovieAdapter movieAdapter;
 
-    private static String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key={your api key here}&language=en-US&page=1";
-    private static String TOP_URL = "https://api.themoviedb.org/3/movie/top_rated?api_key={your api key here}&language=en-US&page=1";
+    /*
+    TODO Add your TheMovieDB generated API Key here!
+     */
+    private static String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY]&language=en-US&page=1";
+    private static String TOP_URL = "https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_KEY]&language=en-US&page=1";
 
     private String BASE_URL = "http://image.tmdb.org/t/p/w185";
 
