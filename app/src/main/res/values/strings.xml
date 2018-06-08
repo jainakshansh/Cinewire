@@ -2,4 +2,6 @@
     <string name="app_name">Cinewire</string>
     <string name="movie_poster">Movie Poster</string>
     <string name="toggle_view">Toggle View</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
 </resources>

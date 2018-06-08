@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
     private static String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY_HERE]&language=en-US";
     private static String TOP_URL = "https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_KEY_HERE]&language=en-US";
 
-    private String BASE_URL = "http://image.tmdb.org/t/p/w185";
+    private String BASE_URL = "http://image.tmdb.org/t/p/w342";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,5 +164,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
 
         //Starting the activity with all the data passed to the next one.
         startActivity(detailedView);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }
