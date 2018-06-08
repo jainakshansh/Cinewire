@@ -29,9 +29,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private static final int LIST_ITEM = 100;
     private static final int GRID_ITEM = 101;
-    boolean isGrid = true;
+    private boolean isGrid = true;
 
-    public static class MovieViewHolder extends RecyclerView.ViewHolder {
+    private RecyclerClickListener recyclerClickListener;
+
+    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView moviePoster;
         TextView movieName, movieOverview;
 
@@ -40,12 +42,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             moviePoster = view.findViewById(R.id.movie_poster);
             movieName = view.findViewById(R.id.movie_name);
             movieOverview = view.findViewById(R.id.movie_overview);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int clickedPosition = getAdapterPosition();
+            recyclerClickListener.onItemClicked(clickedPosition);
         }
     }
 
-    public MovieAdapter(Context context, List<MovieItem> movieItemList) {
+    public MovieAdapter(Context context, List<MovieItem> movieItemList, RecyclerClickListener recyclerClickListener) {
         this.context = context;
         this.movieItemList = movieItemList;
+        this.recyclerClickListener = recyclerClickListener;
         qMed = Typeface.createFromAsset(context.getAssets(), "fonts/Quicksand-Medium.ttf");
     }
 
@@ -94,5 +104,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public int getItemCount() {
         return movieItemList.size();
     }
-}
 
+    public interface RecyclerClickListener {
+        void onItemClicked(int clickedItemIndex);
+    }
+}

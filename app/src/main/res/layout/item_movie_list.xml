@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:orientation="vertical"
         app:scallopPositionPercent="40"
-        app:scallopRadius="16dp"
+        app:scallopRadius="12dp"
         app:showBorder="true"
         app:showDivider="true"
         app:ticketElevation="4dp" />

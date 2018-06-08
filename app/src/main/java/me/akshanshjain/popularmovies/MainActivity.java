@@ -1,5 +1,6 @@
 package me.akshanshjain.popularmovies;
 
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -31,7 +32,7 @@ import java.util.List;
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.Utils.MovieAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.RecyclerClickListener {
 
     private Toolbar toolbar;
 
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
     /*
     TODO Add your TheMovieDB generated API Key here!
      */
-    private static String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY]&language=en-US&page=1";
-    private static String TOP_URL = "https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_KEY]&language=en-US&page=1";
+    private static String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY_HERE]&language=en-US";
+    private static String TOP_URL = "https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_KEY_HERE]&language=en-US";
 
     private String BASE_URL = "http://image.tmdb.org/t/p/w185";
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         movieItemList = new ArrayList<>();
         moviesRecycler = findViewById(R.id.movies_recycler);
-        movieAdapter = new MovieAdapter(this, movieItemList);
+        movieAdapter = new MovieAdapter(this, movieItemList, this);
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         moviesRecycler.setLayoutManager(layoutManager);
@@ -101,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         if (connectivityManager.getActiveNetworkInfo() != null) {
             requestQueue.add(popularRequest);
-            requestQueue.add(topRequest);
         } else {
             Toast.makeText(this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
         }
@@ -147,4 +147,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onItemClicked(int clickedItemIndex) {
+        //Getting the information about the item clicked.
+        MovieItem movieItem;
+        Intent detailedView = new Intent(getApplicationContext(), DetailActivity.class);
+        movieItem = movieItemList.get(clickedItemIndex);
+
+        //Passing in the data to the detailed activity.
+        detailedView.putExtra("ID", movieItem.getId());
+        detailedView.putExtra("NAME", movieItem.getName());
+        detailedView.putExtra("IMAGE", movieItem.getImage());
+        detailedView.putExtra("OVERVIEW", movieItem.getOverview());
+        detailedView.putExtra("RELEASE", movieItem.getRelease_date());
+        detailedView.putExtra("VOTE_AVG", movieItem.getVote_average());
+
+        //Starting the activity with all the data passed to the next one.
+        startActivity(detailedView);
+    }
 }
