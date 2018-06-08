@@ -2,7 +2,10 @@ package me.akshanshjain.popularmovies;
 
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -40,8 +45,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
     private RecyclerView moviesRecycler;
     private MovieAdapter movieAdapter;
 
+    private ConnectivityManager connectivityManager;
+    private NetworkInfo networkInfo;
+    private ConstraintLayout constraintLayout;
+
+    private RequestQueue requestQueue;
+    private JsonObjectRequest popularRequest, topRequest;
+
     /*
-    TODO Add your TheMovieDB generated API Key here!
+    TODO Add your TheMovieDB generated API key here!
      */
     private static String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY_HERE]&language=en-US";
     private static String TOP_URL = "https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_KEY_HERE]&language=en-US";
@@ -72,39 +84,54 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
         moviesRecycler.setHasFixedSize(true);
         moviesRecycler.setAdapter(movieAdapter);
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonObjectRequest popularRequest = new JsonObjectRequest(Request.Method.GET, POPULAR_URL, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        extractFromJSON(response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        //Initializing and referencing the Parent View for the activity.
+        constraintLayout = findViewById(R.id.parent_main);
 
-        JsonObjectRequest topRequest = new JsonObjectRequest(Request.Method.GET, TOP_URL, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        extractFromJSON(response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        requestQueue = Volley.newRequestQueue(this);
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        if (connectivityManager.getActiveNetworkInfo() != null) {
-            requestQueue.add(popularRequest);
+        if (isConnected()) {
+            popularNetworkReq();
         } else {
-            Toast.makeText(this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
+            popularNetworkReq();
+            callSnackbar(requestQueue, popularRequest);
         }
+        movieAdapter.notifyDataSetChanged();
+    }
+
+    private void topNetworkReq() {
+        movieItemList.clear();
+        topRequest = new JsonObjectRequest(Request.Method.GET, TOP_URL, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        extractFromJSON(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue.add(topRequest);
+        movieAdapter.notifyDataSetChanged();
+    }
+
+    private void popularNetworkReq() {
+        movieItemList.clear();
+        popularRequest = new JsonObjectRequest(Request.Method.GET, POPULAR_URL, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        extractFromJSON(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue.add(popularRequest);
+        movieAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -122,11 +149,29 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
                 item.setIcon(isGrid ? ContextCompat.getDrawable(this, R.drawable.list) : ContextCompat.getDrawable(this, R.drawable.grid));
                 moviesRecycler.setLayoutManager(isGrid ? new GridLayoutManager(this, 2) : new LinearLayoutManager(this));
                 break;
+            case R.id.popular_menu_item:
+                if (isConnected()) {
+                    popularNetworkReq();
+                } else {
+                    popularNetworkReq();
+                    callSnackbar(requestQueue, popularRequest);
+                }
+                break;
+            case R.id.top_menu_item:
+                if (isConnected()) {
+                    topNetworkReq();
+                } else {
+                    topNetworkReq();
+                    callSnackbar(requestQueue, topRequest);
+                }
+                break;
         }
+        movieAdapter.notifyDataSetChanged();
         return super.onOptionsItemSelected(item);
     }
 
     private void extractFromJSON(JSONObject baseJSONResponse) {
+        movieItemList.clear();
         try {
             JSONArray results = baseJSONResponse.getJSONArray("results");
             for (int i = 0; i < results.length(); i++) {
@@ -145,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        movieAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -165,5 +211,31 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
         //Starting the activity with all the data passed to the next one.
         startActivity(detailedView);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    private boolean isConnected() {
+        connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null;
+    }
+
+    private void callSnackbar(final RequestQueue requestQueue, final JsonObjectRequest jsonObjectRequest) {
+        Snackbar snackbar = Snackbar.make(constraintLayout, "Connection timed out!", Snackbar.LENGTH_INDEFINITE)
+                .setAction("RELOAD", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (isConnected()) {
+                            requestQueue.add(jsonObjectRequest);
+                            movieAdapter.notifyDataSetChanged();
+                        } else {
+                            callSnackbar(requestQueue, jsonObjectRequest);
+                        }
+                    }
+                });
+        snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        View snackbarView = snackbar.getView();
+        TextView snackText = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        snackText.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+        snackbar.show();
     }
 }
