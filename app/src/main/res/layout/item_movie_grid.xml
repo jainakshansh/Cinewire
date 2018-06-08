@@ -24,10 +24,10 @@
 
     <ImageView
         android:id="@+id/movie_poster"
-        android:layout_width="0dp"
-        android:layout_height="224dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginStart="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="227dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
         android:contentDescription="@string/movie_poster"
         android:scaleType="centerCrop"
         app:layout_constraintLeft_toLeftOf="@id/ticket_view"
