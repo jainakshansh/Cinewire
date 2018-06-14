@@ -4,4 +4,9 @@
     <string name="toggle_view">Toggle View</string>
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
+    <string name="popularUrl">https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY_HERE]&amp;language=en-US</string>
+    <string name="topUrl">https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_KEY_HERE]&amp;language=en-US</string>
+    <string name="baseUrl">http://image.tmdb.org/t/p/w342</string>
+    <string name="connection_timed_out">Connection Timed Out!</string>
+    <string name="check_network_connection">Please check your internet connection!</string>
 </resources>

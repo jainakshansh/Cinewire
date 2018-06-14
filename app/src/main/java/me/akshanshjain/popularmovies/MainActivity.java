@@ -13,6 +13,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -52,18 +53,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
     private RequestQueue requestQueue;
     private JsonObjectRequest popularRequest, topRequest;
 
-    /*
-    TODO Add your TheMovieDB generated API key here!
-     */
-    private static String POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY_HERE]&language=en-US";
-    private static String TOP_URL = "https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_KEY_HERE]&language=en-US";
-
-    private String BASE_URL = "http://image.tmdb.org/t/p/w342";
+    private static String POPULAR_URL;
+    private static String TOP_URL;
+    private String BASE_URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /*
+            TODO Add your TheMovieDB generated API key in the strings file!
+            Hover over the string id and Ctrl + Mouse click to directly navigate to string file.
+        */
+        POPULAR_URL = getResources().getString(R.string.popularUrl);
+        TOP_URL = getResources().getString(R.string.topUrl);
+        BASE_URL = getResources().getString(R.string.baseUrl);
 
         //Setting up the toolbar for the activity.
         toolbar = findViewById(R.id.toolbar_main);
@@ -77,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
         moviesRecycler = findViewById(R.id.movies_recycler);
         movieAdapter = new MovieAdapter(this, movieItemList, this);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns());
         moviesRecycler.setLayoutManager(layoutManager);
         moviesRecycler.setItemAnimator(new DefaultItemAnimator());
         moviesRecycler.setNestedScrollingEnabled(false);
@@ -109,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
             }
         });
         requestQueue.add(topRequest);
@@ -127,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
             }
         });
         requestQueue.add(popularRequest);
@@ -147,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
             case R.id.toggle_view:
                 boolean isGrid = movieAdapter.toggleViewType();
                 item.setIcon(isGrid ? ContextCompat.getDrawable(this, R.drawable.list) : ContextCompat.getDrawable(this, R.drawable.grid));
-                moviesRecycler.setLayoutManager(isGrid ? new GridLayoutManager(this, 2) : new LinearLayoutManager(this));
+                moviesRecycler.setLayoutManager(isGrid ? new GridLayoutManager(this, numberOfColumns()) : new LinearLayoutManager(this));
                 break;
             case R.id.popular_menu_item:
                 if (isConnected()) {
@@ -220,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
     }
 
     private void callSnackbar(final RequestQueue requestQueue, final JsonObjectRequest jsonObjectRequest) {
-        Snackbar snackbar = Snackbar.make(constraintLayout, "Connection timed out!", Snackbar.LENGTH_INDEFINITE)
+        Snackbar snackbar = Snackbar.make(constraintLayout, getResources().getString(R.string.connection_timed_out), Snackbar.LENGTH_INDEFINITE)
                 .setAction("RELOAD", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -237,5 +242,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
         TextView snackText = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
         snackText.setTextColor(ContextCompat.getColor(this, android.R.color.white));
         snackbar.show();
+    }
+
+    private int numberOfColumns() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        // You can change this divider to adjust the size of the poster
+        int widthDivider = 400;
+        int width = displayMetrics.widthPixels;
+        int nColumns = width / widthDivider;
+        if (nColumns < 2) return 2;
+        return nColumns;
     }
 }
