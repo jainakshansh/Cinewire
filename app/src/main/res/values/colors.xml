@@ -4,4 +4,9 @@
     <color name="colorPrimaryDark">#00AEEF</color>
     <color name="colorAccent">#F44336</color>
     <color name="materialBlack">#383838</color>
+
+    <color name="primary_now_playing">#43A7EF</color>
+    <color name="primary_popular">#E52F66</color>
+    <color name="primary_top">#4FBD69</color>
+    <color name="primary_favorites">#FF8008</color>
 </resources>

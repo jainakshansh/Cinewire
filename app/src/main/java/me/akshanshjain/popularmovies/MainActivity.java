@@ -1,6 +1,8 @@
 package me.akshanshjain.popularmovies;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -66,6 +68,57 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //States for the bottom navigation menu
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_enabled},
+                new int[]{-android.R.attr.state_checked},
+                new int[]{android.R.attr.state_pressed},
+                new int[]{android.R.attr.state_window_focused}
+        };
+
+        int[] nowColors = new int[]{
+                ContextCompat.getColor(this, R.color.primary_now_playing),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.primary_now_playing)
+        };
+
+        int[] popularColors = new int[]{
+                ContextCompat.getColor(this, R.color.primary_popular),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.primary_popular)
+        };
+
+        int[] topColors = new int[]{
+                ContextCompat.getColor(this, R.color.primary_top),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.primary_top)
+        };
+
+        int[] favoriteColors = new int[]{
+                ContextCompat.getColor(this, R.color.primary_favorites),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.materialBlack),
+                ContextCompat.getColor(this, R.color.primary_favorites)
+        };
+
+        ColorStateList nowColorList = new ColorStateList(states, nowColors);
+        ColorStateList popularColorList = new ColorStateList(states, popularColors);
+        ColorStateList topColorList = new ColorStateList(states, topColors);
+        ColorStateList favoriteColorList = new ColorStateList(states, favoriteColors);
+
+        //Initialising the major containers
+        viewPager = findViewById(R.id.view_pager_main);
+        bottomNavigationView = findViewById(R.id.bottom_navigation_main);
+        bottomNavigationView.setItemIconTintList(nowColorList);
 
         /*
             TODO Add your TheMovieDB generated API key in the strings file!

@@ -58,7 +58,8 @@
                 android:id="@+id/bottom_navigation_main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:itemIconTint="@color/materialBlack" />
+                app:itemIconTint="@color/materialBlack"
+                app:menu="@menu/navigation_items" />
 
         </LinearLayout>
 
