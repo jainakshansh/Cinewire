@@ -7,12 +7,5 @@
         android:icon="@drawable/list"
         android:title="@string/toggle_view"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/popular_menu_item"
-        android:title="@string/popular" />
-
-    <item
-        android:id="@+id/top_menu_item"
-        android:title="@string/top_rated" />
+    
 </menu>

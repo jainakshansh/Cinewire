@@ -9,4 +9,5 @@
     <string name="baseUrl">http://image.tmdb.org/t/p/w342</string>
     <string name="connection_timed_out">Connection Timed Out!</string>
     <string name="check_network_connection">Please check your internet connection!</string>
+    <string name="fragment_menu_title">●</string>
 </resources>
