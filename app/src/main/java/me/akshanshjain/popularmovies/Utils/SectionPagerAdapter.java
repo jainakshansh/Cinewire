@@ -5,6 +5,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import me.akshanshjain.popularmovies.Fragments.Favorites;
+import me.akshanshjain.popularmovies.Fragments.NowPlaying;
+import me.akshanshjain.popularmovies.Fragments.Popular;
+import me.akshanshjain.popularmovies.Fragments.TopRated;
+
 public class SectionPagerAdapter extends FragmentPagerAdapter {
 
     public SectionPagerAdapter(FragmentManager fragmentManager) {
@@ -13,7 +18,18 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return null;
+        switch (position) {
+            case 0:
+                return new NowPlaying();
+            case 1:
+                return new Popular();
+            case 2:
+                return new TopRated();
+            case 3:
+                return new Favorites();
+            default:
+                return new NowPlaying();
+        }
     }
 
     @Override

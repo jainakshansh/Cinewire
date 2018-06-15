@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
@@ -41,6 +42,7 @@ import java.util.List;
 
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.Utils.MovieAdapter;
+import me.akshanshjain.popularmovies.Utils.SectionPagerAdapter;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.RecyclerClickListener {
 
@@ -57,12 +59,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
     private RequestQueue requestQueue;
     private JsonObjectRequest popularRequest, topRequest;
 
-    private static String POPULAR_URL;
-    private static String TOP_URL;
     private String BASE_URL;
 
     private BottomNavigationView bottomNavigationView;
     private ViewPager viewPager;
+    private SectionPagerAdapter sectionPagerAdapter;
+    private int choice;
+    private MenuItem previousMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,23 +113,113 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
                 ContextCompat.getColor(this, R.color.primary_favorites)
         };
 
-        ColorStateList nowColorList = new ColorStateList(states, nowColors);
-        ColorStateList popularColorList = new ColorStateList(states, popularColors);
-        ColorStateList topColorList = new ColorStateList(states, topColors);
-        ColorStateList favoriteColorList = new ColorStateList(states, favoriteColors);
+        final ColorStateList nowColorList = new ColorStateList(states, nowColors);
+        final ColorStateList popularColorList = new ColorStateList(states, popularColors);
+        final ColorStateList topColorList = new ColorStateList(states, topColors);
+        final ColorStateList favoriteColorList = new ColorStateList(states, favoriteColors);
 
         //Initialising the major containers
-        viewPager = findViewById(R.id.view_pager_main);
         bottomNavigationView = findViewById(R.id.bottom_navigation_main);
         bottomNavigationView.setItemIconTintList(nowColorList);
 
-        /*
-            TODO Add your TheMovieDB generated API key in the strings file!
-            Hover over the string id and Ctrl + Mouse click to directly navigate to string file.
-        */
-        POPULAR_URL = getResources().getString(R.string.popularUrl);
-        TOP_URL = getResources().getString(R.string.topUrl);
-        BASE_URL = getResources().getString(R.string.baseUrl);
+        viewPager = findViewById(R.id.view_pager_main);
+        sectionPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(sectionPagerAdapter);
+        choice = 0;
+
+        switch (choice) {
+            case 0:
+                viewPager.setCurrentItem(0);
+                bottomNavigationView.setItemIconTintList(nowColorList);
+                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                break;
+            case 1:
+                viewPager.setCurrentItem(1);
+                bottomNavigationView.setItemIconTintList(nowColorList);
+                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                bottomNavigationView.getMenu().getItem(1).setChecked(true);
+                break;
+            case 2:
+                viewPager.setCurrentItem(2);
+                bottomNavigationView.setItemIconTintList(nowColorList);
+                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                bottomNavigationView.getMenu().getItem(2).setChecked(true);
+                break;
+            case 3:
+                viewPager.setCurrentItem(3);
+                bottomNavigationView.setItemIconTintList(nowColorList);
+                bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                bottomNavigationView.getMenu().getItem(3).setChecked(true);
+                break;
+        }
+
+        //Handling the click listeners for the bottom navigation.
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.now_playing_menu_item:
+                        viewPager.setCurrentItem(0);
+                        bottomNavigationView.setItemIconTintList(nowColorList);
+                        break;
+                    case R.id.popular_menu_item:
+                        viewPager.setCurrentItem(1);
+                        bottomNavigationView.setItemIconTintList(popularColorList);
+                        break;
+                    case R.id.top_menu_item:
+                        viewPager.setCurrentItem(2);
+                        bottomNavigationView.setItemIconTintList(topColorList);
+                        break;
+                    case R.id.favorites_menu_item:
+                        viewPager.setCurrentItem(3);
+                        bottomNavigationView.setItemIconTintList(favoriteColorList);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        bottomNavigationView.setItemIconTintList(nowColorList);
+                        break;
+                    case 1:
+                        bottomNavigationView.setItemIconTintList(popularColorList);
+                        break;
+                    case 2:
+                        bottomNavigationView.setItemIconTintList(topColorList);
+                        break;
+                    case 3:
+                        bottomNavigationView.setItemIconTintList(favoriteColorList);
+                        break;
+                    default:
+                        bottomNavigationView.setItemIconTintList(nowColorList);
+                        break;
+                }
+
+                if (previousMenuItem != null) {
+                    previousMenuItem.setChecked(false);
+                } else {
+                    bottomNavigationView.getMenu().getItem(0).setChecked(false);
+                }
+
+                bottomNavigationView.getMenu().getItem(position).setChecked(true);
+                previousMenuItem = bottomNavigationView.getMenu().getItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
 
         //Setting up the toolbar for the activity.
         toolbar = findViewById(R.id.toolbar_main);
@@ -153,14 +246,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
         requestQueue = Volley.newRequestQueue(this);
 
         if (isConnected()) {
-            popularNetworkReq();
+            //popularNetworkReq();
         } else {
-            popularNetworkReq();
+            //popularNetworkReq();
             callSnackbar(requestQueue, popularRequest);
         }
         movieAdapter.notifyDataSetChanged();
     }
 
+    /*
     private void topNetworkReq() {
         movieItemList.clear();
         topRequest = new JsonObjectRequest(Request.Method.GET, TOP_URL, null,
@@ -178,7 +272,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
         requestQueue.add(topRequest);
         movieAdapter.notifyDataSetChanged();
     }
+    */
 
+    /*
     private void popularNetworkReq() {
         movieItemList.clear();
         popularRequest = new JsonObjectRequest(Request.Method.GET, POPULAR_URL, null,
@@ -196,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
         requestQueue.add(popularRequest);
         movieAdapter.notifyDataSetChanged();
     }
+    */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -214,17 +311,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Recy
                 break;
             case R.id.popular_menu_item:
                 if (isConnected()) {
-                    popularNetworkReq();
+                    //popularNetworkReq();
                 } else {
-                    popularNetworkReq();
+                    //popularNetworkReq();
                     callSnackbar(requestQueue, popularRequest);
                 }
                 break;
             case R.id.top_menu_item:
                 if (isConnected()) {
-                    topNetworkReq();
+                    //topNetworkReq();
                 } else {
-                    topNetworkReq();
+                    //topNetworkReq();
                     callSnackbar(requestQueue, topRequest);
                 }
                 break;
