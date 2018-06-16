@@ -57,8 +57,6 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         //Setting the common layout for the fragment.
         View view = inflater.inflate(R.layout.fragment_common_layout, container, false);
 
-        Log.d("ADebug", "View initialized");
-
         /*
             TODO Add your TheMovieDB generated API key in the strings file!
             Hover over the string id and Ctrl + Mouse click to directly navigate to string file.
@@ -72,16 +70,12 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         moviesRecycler = view.findViewById(R.id.movies_recycler);
         movieAdapter = new MovieAdapter(this.getContext().getApplicationContext(), movieItemList, this);
 
-        Log.d("ADebug", "Adapters");
-
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this.getActivity(), numberOfColumns());
         moviesRecycler.setLayoutManager(layoutManager);
         moviesRecycler.setItemAnimator(new DefaultItemAnimator());
         moviesRecycler.setNestedScrollingEnabled(false);
         moviesRecycler.setHasFixedSize(true);
         moviesRecycler.setAdapter(movieAdapter);
-
-        Log.d("ADebug", "Adapter set");
 
         requestQueue = Volley.newRequestQueue(getContext().getApplicationContext());
         if (isConnected()) {
@@ -99,8 +93,6 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
                 }
             });
         }
-
-        Log.d("ADebug", "Network Req completed.");
 
         requestQueue.add(jsonObjectRequest);
         movieAdapter.notifyDataSetChanged();
