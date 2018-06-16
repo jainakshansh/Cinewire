@@ -51,8 +51,7 @@
                 android:id="@+id/view_pager_main"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                android:layout_weight="1" />
 
             <android.support.design.widget.BottomNavigationView
                 android:id="@+id/bottom_navigation_main"
@@ -60,6 +59,33 @@
                 android:layout_height="wrap_content"
                 app:itemIconTint="@color/materialBlack"
                 app:menu="@menu/navigation_items" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="156dp"
+                android:layout_height="156dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/error_image"
+                android:src="@drawable/internet_error" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/check_network_connection"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
