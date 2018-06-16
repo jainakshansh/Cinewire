@@ -12,9 +12,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -31,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.akshanshjain.popularmovies.DetailActivity;
-import me.akshanshjain.popularmovies.MainActivity;
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.R;
 import me.akshanshjain.popularmovies.Utils.MovieAdapter;
@@ -48,12 +49,15 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
     private RequestQueue requestQueue;
     private JsonObjectRequest jsonObjectRequest;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         //Setting the common layout for the fragment.
         View view = inflater.inflate(R.layout.fragment_common_layout, container, false);
+
+        Log.d("ADebug", "View initialized");
 
         /*
             TODO Add your TheMovieDB generated API key in the strings file!
@@ -66,14 +70,18 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         //Setting up the recycler view for the fragment.
         movieItemList = new ArrayList<>();
         moviesRecycler = view.findViewById(R.id.movies_recycler);
-        movieAdapter = new MovieAdapter(getContext().getApplicationContext(), movieItemList, this);
+        movieAdapter = new MovieAdapter(this.getContext().getApplicationContext(), movieItemList, this);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext().getApplicationContext(), numberOfColumns());
+        Log.d("ADebug", "Adapters");
+
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this.getActivity(), numberOfColumns());
         moviesRecycler.setLayoutManager(layoutManager);
         moviesRecycler.setItemAnimator(new DefaultItemAnimator());
         moviesRecycler.setNestedScrollingEnabled(false);
         moviesRecycler.setHasFixedSize(true);
         moviesRecycler.setAdapter(movieAdapter);
+
+        Log.d("ADebug", "Adapter set");
 
         requestQueue = Volley.newRequestQueue(getContext().getApplicationContext());
         if (isConnected()) {
@@ -87,9 +95,15 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getContext().getApplicationContext(), getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
                 }
             });
         }
+
+        Log.d("ADebug", "Network Req completed.");
+
+        requestQueue.add(jsonObjectRequest);
+        movieAdapter.notifyDataSetChanged();
 
         return view;
     }

@@ -90,34 +90,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.view_pager_main);
         sectionPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(sectionPagerAdapter);
-        choice = 0;
-
-        switch (choice) {
-            case 0:
-                viewPager.setCurrentItem(0);
-                bottomNavigationView.setItemIconTintList(nowColorList);
-                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                bottomNavigationView.getMenu().getItem(0).setChecked(true);
-                break;
-            case 1:
-                viewPager.setCurrentItem(1);
-                bottomNavigationView.setItemIconTintList(nowColorList);
-                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                bottomNavigationView.getMenu().getItem(1).setChecked(true);
-                break;
-            case 2:
-                viewPager.setCurrentItem(2);
-                bottomNavigationView.setItemIconTintList(nowColorList);
-                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                bottomNavigationView.getMenu().getItem(2).setChecked(true);
-                break;
-            case 3:
-                viewPager.setCurrentItem(3);
-                bottomNavigationView.setItemIconTintList(nowColorList);
-                bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                bottomNavigationView.getMenu().getItem(3).setChecked(true);
-                break;
-        }
 
         //Handling the click listeners for the bottom navigation.
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

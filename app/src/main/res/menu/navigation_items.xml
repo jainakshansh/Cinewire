@@ -3,18 +3,22 @@
 
     <item
         android:id="@+id/now_playing_menu_item"
+        android:icon="@drawable/ic_now_playing"
         android:title="@string/fragment_menu_title" />
 
     <item
         android:id="@+id/popular_menu_item"
+        android:icon="@drawable/ic_popular"
         android:title="@string/fragment_menu_title" />
 
     <item
         android:id="@+id/top_menu_item"
+        android:icon="@drawable/ic_trending_up"
         android:title="@string/fragment_menu_title" />
 
     <item
         android:id="@+id/favorites_menu_item"
+        android:icon="@drawable/ic_favorites"
         android:title="@string/fragment_menu_title" />
 
 </menu>
