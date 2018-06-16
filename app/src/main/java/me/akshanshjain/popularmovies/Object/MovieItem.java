@@ -1,11 +1,16 @@
 package me.akshanshjain.popularmovies.Object;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 /**
  * Created by Akshansh on 05-06-2018.
  */
 
+@Entity(tableName = "movies")
 public class MovieItem {
 
+    @PrimaryKey
     private String id;
     private String name;
     private String image;
@@ -13,7 +18,7 @@ public class MovieItem {
     private String vote_average;
     private String release_date;
 
-    public MovieItem() {
+    private MovieItem() {
     }
 
     public MovieItem(String id, String name, String image, String overview, String vote_average, String release_date) {
