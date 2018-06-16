@@ -8,8 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import me.akshanshjain.popularmovies.Utils.SectionPagerAdapter;
@@ -21,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private ViewPager viewPager;
     private SectionPagerAdapter sectionPagerAdapter;
-    private int choice;
     private MenuItem previousMenuItem;
 
     @Override
@@ -46,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{android.R.attr.state_window_focused}
         };
 
+        //Defining colors for the bottom navigation menu.
         int[] nowColors = new int[]{
                 ContextCompat.getColor(this, R.color.primary_now_playing),
                 ContextCompat.getColor(this, R.color.materialBlack),
@@ -99,18 +97,22 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.now_playing_menu_item:
                         viewPager.setCurrentItem(0);
                         bottomNavigationView.setItemIconTintList(nowColorList);
+                        bottomNavigationView.setItemTextColor(nowColorList);
                         break;
                     case R.id.popular_menu_item:
                         viewPager.setCurrentItem(1);
                         bottomNavigationView.setItemIconTintList(popularColorList);
+                        bottomNavigationView.setItemTextColor(popularColorList);
                         break;
                     case R.id.top_menu_item:
                         viewPager.setCurrentItem(2);
                         bottomNavigationView.setItemIconTintList(topColorList);
+                        bottomNavigationView.setItemTextColor(topColorList);
                         break;
                     case R.id.favorites_menu_item:
                         viewPager.setCurrentItem(3);
                         bottomNavigationView.setItemIconTintList(favoriteColorList);
+                        bottomNavigationView.setItemTextColor(favoriteColorList);
                         break;
                 }
                 return false;
@@ -128,18 +130,23 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         bottomNavigationView.setItemIconTintList(nowColorList);
+                        bottomNavigationView.setItemTextColor(nowColorList);
                         break;
                     case 1:
                         bottomNavigationView.setItemIconTintList(popularColorList);
+                        bottomNavigationView.setItemTextColor(popularColorList);
                         break;
                     case 2:
                         bottomNavigationView.setItemIconTintList(topColorList);
+                        bottomNavigationView.setItemTextColor(topColorList);
                         break;
                     case 3:
                         bottomNavigationView.setItemIconTintList(favoriteColorList);
+                        bottomNavigationView.setItemTextColor(favoriteColorList);
                         break;
                     default:
                         bottomNavigationView.setItemIconTintList(nowColorList);
+                        bottomNavigationView.setItemTextColor(nowColorList);
                         break;
                 }
 
@@ -157,28 +164,5 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        /*
-        switch (item.getItemId()) {
-            case R.id.toggle_view:
-                boolean isGrid = movieAdapter.toggleViewType();
-                item.setIcon(isGrid ? ContextCompat.getDrawable(this, R.drawable.list) : ContextCompat.getDrawable(this, R.drawable.grid));
-                moviesRecycler.setLayoutManager(isGrid ? new GridLayoutManager(this, numberOfColumns()) : new LinearLayoutManager(this));
-                break;
-        }
-        movieAdapter.notifyDataSetChanged();
-        return super.onOptionsItemSelected(item);
-        */
-        return false;
     }
 }
