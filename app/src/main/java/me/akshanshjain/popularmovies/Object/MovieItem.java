@@ -2,6 +2,7 @@ package me.akshanshjain.popularmovies.Object;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
  * Created by Akshansh on 05-06-2018.
@@ -11,6 +12,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class MovieItem {
 
     @PrimaryKey
+    @NonNull
     private String id;
     private String name;
     private String image;
