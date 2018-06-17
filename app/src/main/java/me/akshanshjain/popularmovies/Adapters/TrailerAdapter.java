@@ -7,10 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -31,12 +28,10 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
 
     public class TrailerViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView trailerPoster;
         public TextView trailerName;
 
         public TrailerViewHolder(View view) {
             super(view);
-            trailerPoster = view.findViewById(R.id.trailer_poster);
             trailerName = view.findViewById(R.id.trailer_name);
         }
     }
@@ -51,10 +46,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
     @Override
     public void onBindViewHolder(@NonNull TrailerViewHolder holder, int position) {
         TrailerItem trailerItem = trailerItemList.get(position);
-
-        Picasso.get()
-                .load(trailerItem.getKey())
-                .into(holder.trailerPoster);
 
         holder.trailerName.setTypeface(qReg);
         holder.trailerName.setText(trailerItem.getName());

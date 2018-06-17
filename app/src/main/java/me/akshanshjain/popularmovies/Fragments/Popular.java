@@ -117,11 +117,6 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
 
         detailedView.putExtras(bundle);
 
-        //Setting the arguments for the fragments to receive data.
-        new Popular().setArguments(bundle);
-        new Trailers().setArguments(bundle);
-        new SimilarMovies().setArguments(bundle);
-
         //Starting the activity with all the data passed to the next one.
         startActivity(detailedView);
         getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
