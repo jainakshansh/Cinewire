@@ -11,6 +11,11 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import me.akshanshjain.popularmovies.Object.TrailerItem;
+
 public class DetailActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
@@ -20,6 +25,7 @@ public class DetailActivity extends AppCompatActivity {
     private Typeface qBold, qMedium;
 
     private RecyclerView trailersRecycler;
+    private List<TrailerItem> trailerItemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +85,7 @@ public class DetailActivity extends AppCompatActivity {
         qBold = Typeface.createFromAsset(getAssets(), "fonts/Quicksand-Bold.ttf");
         qMedium = Typeface.createFromAsset(getAssets(), "fonts/Quicksand-Medium.ttf");
 
+        trailerItemList = new ArrayList<>();
         trailersRecycler = findViewById(R.id.trailers_recycler);
     }
 

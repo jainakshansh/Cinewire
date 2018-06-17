@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/trailer_poster"
+        android:layout_width="match_parent"
+        android:layout_height="216dp"
+        android:contentDescription="@string/movie_poster"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/trailer_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:textColor="@color/materialBlack"
+        android:textSize="16sp" />
+
+</LinearLayout>
