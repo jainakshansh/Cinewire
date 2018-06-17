@@ -106,13 +106,21 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         Intent detailedView = new Intent(getContext().getApplicationContext(), DetailActivity.class);
         movieItem = movieItemList.get(clickedItemIndex);
 
+        Bundle bundle = new Bundle();
         //Passing in the data to the detailed activity.
-        detailedView.putExtra("ID", movieItem.getId());
-        detailedView.putExtra("NAME", movieItem.getName());
-        detailedView.putExtra("IMAGE", movieItem.getImage());
-        detailedView.putExtra("OVERVIEW", movieItem.getOverview());
-        detailedView.putExtra("RELEASE", movieItem.getRelease_date());
-        detailedView.putExtra("VOTE_AVG", movieItem.getVote_average());
+        bundle.putString("ID", movieItem.getId());
+        bundle.putString("NAME", movieItem.getName());
+        bundle.putString("IMAGE", movieItem.getImage());
+        bundle.putString("OVERVIEW", movieItem.getOverview());
+        bundle.putString("RELEASE", movieItem.getRelease_date());
+        bundle.putString("VOTE_AVG", movieItem.getVote_average());
+
+        detailedView.putExtras(bundle);
+
+        //Setting the arguments for the fragments to receive data.
+        new Popular().setArguments(bundle);
+        new Trailers().setArguments(bundle);
+        new SimilarMovies().setArguments(bundle);
 
         //Starting the activity with all the data passed to the next one.
         startActivity(detailedView);

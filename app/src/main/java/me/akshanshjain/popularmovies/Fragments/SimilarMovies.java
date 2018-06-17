@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,7 @@ public class SimilarMovies extends Fragment {
     private RequestQueue requestQueue;
     private JsonObjectRequest jsonObjectRequest;
 
-    private static String SIMILAR_URL;
+    private String SIMILAR_URL;
     private String BASE_URL;
 
     @Nullable
@@ -62,6 +63,14 @@ public class SimilarMovies extends Fragment {
         similarRecycler.setLayoutManager(layoutManager);
         similarRecycler.setItemAnimator(new DefaultItemAnimator());
         similarRecycler.setAdapter(adapter);
+
+        Bundle receiverBundle = getActivity().getIntent().getExtras();
+        if (receiverBundle != null) {
+            String id = receiverBundle.getString("ID");
+            //Constructing the URL by adding the movie ID from the data.
+            SIMILAR_URL = SIMILAR_URL.replace("{movieID}", id);
+            Log.d("ADebug", SIMILAR_URL);
+        }
 
         requestQueue = Volley.newRequestQueue(getContext());
         if (isConnected()) {
