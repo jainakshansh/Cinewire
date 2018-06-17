@@ -34,7 +34,7 @@ import java.util.List;
 import me.akshanshjain.popularmovies.DetailActivity;
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.R;
-import me.akshanshjain.popularmovies.Utils.MovieAdapter;
+import me.akshanshjain.popularmovies.Adapters.MovieAdapter;
 
 public class TopRated extends Fragment implements MovieAdapter.RecyclerClickListener {
 

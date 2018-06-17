@@ -1,4 +1,4 @@
-package me.akshanshjain.popularmovies.Utils;
+package me.akshanshjain.popularmovies.Adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;

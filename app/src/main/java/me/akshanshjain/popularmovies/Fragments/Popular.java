@@ -12,7 +12,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +34,7 @@ import java.util.List;
 import me.akshanshjain.popularmovies.DetailActivity;
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.R;
-import me.akshanshjain.popularmovies.Utils.MovieAdapter;
+import me.akshanshjain.popularmovies.Adapters.MovieAdapter;
 
 public class Popular extends Fragment implements MovieAdapter.RecyclerClickListener {
 

@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import me.akshanshjain.popularmovies.Utils.SectionPagerAdapter;
+import me.akshanshjain.popularmovies.Adapters.SectionPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 

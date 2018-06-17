@@ -26,7 +26,7 @@ import me.akshanshjain.popularmovies.Database.MovieDatabase;
 import me.akshanshjain.popularmovies.DetailActivity;
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.R;
-import me.akshanshjain.popularmovies.Utils.MovieAdapter;
+import me.akshanshjain.popularmovies.Adapters.MovieAdapter;
 
 public class Favorites extends Fragment implements MovieAdapter.RecyclerClickListener {
 

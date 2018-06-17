@@ -1,4 +1,4 @@
-package me.akshanshjain.popularmovies.Utils;
+package me.akshanshjain.popularmovies.Adapters;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
