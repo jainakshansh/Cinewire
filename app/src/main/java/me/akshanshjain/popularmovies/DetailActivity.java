@@ -15,7 +15,7 @@ public class DetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     private ImageView moviePoster;
-    private TextView movieName, movieOverview, movieRating, movieRelease;
+    private TextView movieName, movieOverview, movieRating, movieRelease, movieFavorite;
     private Typeface qBold, qMedium;
 
     @Override

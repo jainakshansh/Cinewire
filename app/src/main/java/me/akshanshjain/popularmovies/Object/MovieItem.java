@@ -23,7 +23,7 @@ public class MovieItem {
     private MovieItem() {
     }
 
-    public MovieItem(String id, String name, String image, String overview, String vote_average, String release_date) {
+    public MovieItem(@NonNull String id, String name, String image, String overview, String vote_average, String release_date) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -32,6 +32,7 @@ public class MovieItem {
         this.release_date = release_date;
     }
 
+    @NonNull
     public String getId() {
         return id;
     }

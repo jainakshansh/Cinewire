@@ -12,4 +12,5 @@
     <string name="check_network_connection">Please check your internet connection!</string>
     <string name="fragment_menu_title">●</string>
     <string name="error_image">Error Image</string>
+    <string name="favourite">Favourite</string>
 </resources>
