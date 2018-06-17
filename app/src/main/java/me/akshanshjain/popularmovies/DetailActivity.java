@@ -2,6 +2,8 @@ package me.akshanshjain.popularmovies;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -28,7 +30,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.akshanshjain.popularmovies.Adapters.ReviewAdapter;
 import me.akshanshjain.popularmovies.Adapters.TrailerAdapter;
+import me.akshanshjain.popularmovies.Object.ReviewItem;
 import me.akshanshjain.popularmovies.Object.TrailerItem;
 
 public class DetailActivity extends AppCompatActivity {
@@ -38,7 +42,7 @@ public class DetailActivity extends AppCompatActivity {
     private String movieID;
 
     private ImageView moviePoster;
-    private TextView movieName, movieOverview, movieRating, movieRelease, movieFavorite, trailerLabel;
+    private TextView movieName, movieOverview, movieRating, movieRelease, movieFavorite, trailerLabel, reviewLabel;
     private Typeface qBold, qMedium;
 
     private RecyclerView trailersRecycler;
@@ -46,8 +50,13 @@ public class DetailActivity extends AppCompatActivity {
     private TrailerAdapter trailerAdapter;
     private String TRAILER_URL;
 
+    private RecyclerView reviewsRecycler;
+    private List<ReviewItem> reviewItemList;
+    private ReviewAdapter reviewAdapter;
+    private String REVIEW_URL;
+
     private RequestQueue requestQueue;
-    private JsonObjectRequest jsonObjectRequest;
+    private JsonObjectRequest trailerRequest, reviewRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +107,7 @@ public class DetailActivity extends AppCompatActivity {
 
         movieFavorite.setTypeface(qMedium);
 
+        //Setting up the trailers recycler view.
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         trailersRecycler.setLayoutManager(layoutManager);
         trailersRecycler.setItemAnimator(new DefaultItemAnimator());
@@ -105,21 +115,23 @@ public class DetailActivity extends AppCompatActivity {
         trailersRecycler.setNestedScrollingEnabled(false);
         trailersRecycler.setAdapter(trailerAdapter);
 
-        requestQueue = Volley.newRequestQueue(this);
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, TRAILER_URL, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        extractFromJSON(response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(DetailActivity.this, getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
-            }
-        });
-        requestQueue.add(jsonObjectRequest);
-        trailerAdapter.notifyDataSetChanged();
+        //Setting up the reviews recycler view.
+        RecyclerView.LayoutManager reviewLm = new LinearLayoutManager(this);
+        reviewsRecycler.setLayoutManager(reviewLm);
+        reviewsRecycler.setItemAnimator(new DefaultItemAnimator());
+        reviewsRecycler.setHasFixedSize(true);
+        reviewsRecycler.setNestedScrollingEnabled(false);
+        reviewsRecycler.setAdapter(reviewAdapter);
+
+        connectedState();
+    }
+
+    private void connectedState() {
+        if (isConnected()) {
+            networkCalls();
+        } else {
+            connectedState();
+        }
     }
 
     private void initViews() {
@@ -133,14 +145,26 @@ public class DetailActivity extends AppCompatActivity {
         qBold = Typeface.createFromAsset(getAssets(), "fonts/Quicksand-Bold.ttf");
         qMedium = Typeface.createFromAsset(getAssets(), "fonts/Quicksand-Medium.ttf");
 
+        //Initialising all the variables with respect to trailer components.
         trailerLabel = findViewById(R.id.trailer_label_detail);
-        trailerLabel.setTypeface(qMedium);
+        trailerLabel.setTypeface(qBold);
+
         trailerItemList = new ArrayList<>();
         trailersRecycler = findViewById(R.id.trailers_recycler);
         trailerAdapter = new TrailerAdapter(getApplicationContext(), trailerItemList);
         TRAILER_URL = getApplicationContext().getResources().getString(R.string.trailerUrl);
         TRAILER_URL = TRAILER_URL.replace("{movieID}", movieID);
-        Log.d("ADebug", TRAILER_URL);
+
+        //Initialising all the variables with respect to review components.
+        reviewLabel = findViewById(R.id.review_label_detail);
+        reviewLabel.setTypeface(qBold);
+
+        reviewItemList = new ArrayList<>();
+        reviewsRecycler = findViewById(R.id.reviews_recycler);
+        reviewAdapter = new ReviewAdapter(this, reviewItemList);
+
+        REVIEW_URL = getApplicationContext().getResources().getString(R.string.reviewUrl);
+        REVIEW_URL = REVIEW_URL.replace("{movieID}", movieID);
     }
 
     private void extractFromJSON(JSONObject baseJsonResponse) {
@@ -157,6 +181,65 @@ public class DetailActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void extractFromJsonReviews(JSONObject baseJsonResponse) {
+        try {
+            JSONArray results = baseJsonResponse.getJSONArray("results");
+            for (int c = 0; c < results.length(); c++) {
+                JSONObject review = results.getJSONObject(c);
+
+                String author = review.getString("author");
+                String content = review.getString("content");
+
+                reviewItemList.add(new ReviewItem(author, content));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void networkCalls() {
+        //Setting up the network request for trailers.
+        requestQueue = Volley.newRequestQueue(this);
+        trailerRequest = new JsonObjectRequest(Request.Method.GET, TRAILER_URL, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        extractFromJSON(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(DetailActivity.this, getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Setting up the network request for reviews.
+        reviewRequest = new JsonObjectRequest(Request.Method.GET, REVIEW_URL, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        extractFromJsonReviews(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(DetailActivity.this, getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        requestQueue.add(trailerRequest);
+        trailerAdapter.notifyDataSetChanged();
+
+        requestQueue.add(reviewRequest);
+        reviewAdapter.notifyDataSetChanged();
+    }
+
+    private boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null;
     }
 
     @Override

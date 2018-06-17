@@ -2,23 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:contentDescription="@string/movie_poster"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_youtube" />
-
-    <TextView
-        android:id="@+id/trailer_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:gravity="center"
-        android:textColor="@color/materialBlack"
-        android:textSize="16sp" />
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:contentDescription="@string/movie_poster"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_youtube" />
+
+        <TextView
+            android:id="@+id/trailer_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:gravity="center"
+            android:textColor="@color/materialBlack"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary" />
 
 </LinearLayout>
