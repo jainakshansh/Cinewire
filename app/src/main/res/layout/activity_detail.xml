@@ -164,26 +164,6 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/review_label_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/reviews"
-                android:textAllCaps="true"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/reviews_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp" />
-
-            <TextView
                 android:id="@+id/trailer_label_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -201,6 +181,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp" />
+
+            <TextView
+                android:id="@+id/review_label_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/reviews"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/reviews_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
                 android:layout_marginStart="24dp" />
 
         </LinearLayout>

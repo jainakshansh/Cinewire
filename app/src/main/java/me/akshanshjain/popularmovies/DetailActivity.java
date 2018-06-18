@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
@@ -108,7 +110,7 @@ public class DetailActivity extends AppCompatActivity {
         movieFavorite.setTypeface(qMedium);
 
         //Setting up the trailers recycler view.
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         trailersRecycler.setLayoutManager(layoutManager);
         trailersRecycler.setItemAnimator(new DefaultItemAnimator());
         trailersRecycler.setHasFixedSize(true);
@@ -116,12 +118,19 @@ public class DetailActivity extends AppCompatActivity {
         trailersRecycler.setAdapter(trailerAdapter);
 
         //Setting up the reviews recycler view.
-        RecyclerView.LayoutManager reviewLm = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager reviewLm = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         reviewsRecycler.setLayoutManager(reviewLm);
         reviewsRecycler.setItemAnimator(new DefaultItemAnimator());
         reviewsRecycler.setHasFixedSize(true);
         reviewsRecycler.setNestedScrollingEnabled(false);
         reviewsRecycler.setAdapter(reviewAdapter);
+
+        //Centering the layout by using the inbuilt snap helper class.
+        SnapHelper reviewSnapper = new LinearSnapHelper();
+        reviewSnapper.attachToRecyclerView(reviewsRecycler);
+
+        SnapHelper trailerSnapper = new LinearSnapHelper();
+        trailerSnapper.attachToRecyclerView(trailersRecycler);
 
         connectedState();
     }
@@ -178,6 +187,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 trailerItemList.add(new TrailerItem(name, key));
             }
+            trailerAdapter.notifyDataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -194,6 +204,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 reviewItemList.add(new ReviewItem(author, content));
             }
+            reviewAdapter.notifyDataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -230,10 +241,10 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         requestQueue.add(trailerRequest);
-        trailerAdapter.notifyDataSetChanged();
+        //trailerAdapter.notifyDataSetChanged();
 
         requestQueue.add(reviewRequest);
-        reviewAdapter.notifyDataSetChanged();
+        //reviewAdapter.notifyDataSetChanged();
     }
 
     private boolean isConnected() {
