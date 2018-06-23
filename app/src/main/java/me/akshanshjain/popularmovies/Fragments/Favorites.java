@@ -24,6 +24,7 @@ import me.akshanshjain.popularmovies.DetailActivity;
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.R;
 import me.akshanshjain.popularmovies.Adapters.MovieAdapter;
+import me.akshanshjain.popularmovies.Utils.AppExecutors;
 
 public class Favorites extends Fragment implements MovieAdapter.RecyclerClickListener {
 
@@ -97,7 +98,17 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     @Override
     public void onResume() {
         super.onResume();
-        movieItemList = movieDatabase.movieDao().loadAllMovies();
-        movieAdapter.notifyDataSetChanged();
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                movieItemList = movieDatabase.movieDao().loadAllMovies();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        movieAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
     }
 }

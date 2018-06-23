@@ -18,11 +18,14 @@ public interface MovieDao {
     List<MovieItem> loadAllMovies();
 
     @Insert
-    void insertTask(MovieItem movieItem);
+    void insertMovie(MovieItem movieItem);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateTask(MovieItem movieItem);
+    void updateMovie(MovieItem movieItem);
 
     @Delete
-    void deleteTask(MovieItem movieItem);
+    void deleteMovie(MovieItem movieItem);
+
+    @Query("SELECT * FROM movies WHERE id = :movieID")
+    MovieItem loadMovieById(String movieID);
 }

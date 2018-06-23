@@ -32,7 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import me.akshanshjain.popularmovies.Adapters.ReviewAdapter;
@@ -41,6 +40,7 @@ import me.akshanshjain.popularmovies.Database.MovieDatabase;
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.Object.ReviewItem;
 import me.akshanshjain.popularmovies.Object.TrailerItem;
+import me.akshanshjain.popularmovies.Utils.AppExecutors;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -66,6 +66,7 @@ public class DetailActivity extends AppCompatActivity {
     private JsonObjectRequest trailerRequest, reviewRequest;
 
     private MovieDatabase movieDatabase;
+    private MovieItem favoriteMovie;
     private boolean isFavorite = false;
 
     @Override
@@ -142,6 +143,7 @@ public class DetailActivity extends AppCompatActivity {
 
         connectedState();
 
+        isMovieFavorite();
         movieFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -270,18 +272,64 @@ public class DetailActivity extends AppCompatActivity {
         return networkInfo != null;
     }
 
-    /*
-    Called when the favorite button is clicked.
-    It saves the details of the movie into local database for offline experience.
-     */
+    private void isMovieFavorite() {
+        //Checking using the ID if the movie is present in the database and updating isFavorite variable.
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                favoriteMovie = movieDatabase.movieDao().loadMovieById(movieID);
+                isFavorite = favoriteMovie != null;
+            }
+        });
+
+        //Changing the background color of the text view with the state of isFavorite variable.
+        if (isFavorite) {
+            movieFavorite.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.movie_favorite));
+        }
+    }
+
     private void onFavoriteClicked() {
-    }
+        isMovieFavorite();
 
-    private void addMovieToDb() {
-
-    }
-
-    private void removeMovieFromDb() {
+        if (isFavorite) {
+            //Remove the movie from the favorites database.
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    //Building the movie item so as to use when insertion or deletion takes place.
+                    favoriteMovie = new MovieItem(movieID, name, image, overview, rating, release);
+                    //Deleting the movie from the database.
+                    movieDatabase.movieDao().deleteMovie(favoriteMovie);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            movieFavorite.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
+                            isFavorite = false;
+                            Log.d("ADebug", "Deleted");
+                        }
+                    });
+                }
+            });
+        } else {
+            //Add the movie to the favorites database.
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    //Building the movie item so as to use when insertion or deletion takes place.
+                    favoriteMovie = new MovieItem(movieID, name, image, overview, rating, release);
+                    //Adding the movie to the database.
+                    movieDatabase.movieDao().insertMovie(favoriteMovie);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            movieFavorite.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.movie_favorite));
+                            isFavorite = true;
+                            Log.d("ADebug", "Inserted");
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override

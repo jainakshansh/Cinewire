@@ -11,17 +11,15 @@ import me.akshanshjain.popularmovies.Object.MovieItem;
 public abstract class MovieDatabase extends RoomDatabase {
 
     private static final Object LOCK = new Object();
-    private static final String DATABASE_NAME = "moviesdb";
+    private static final String DATABASE_NAME = "movies";
     private static MovieDatabase sInstance;
 
     public static MovieDatabase getInstance(Context context) {
         if (sInstance == null) {
             synchronized (LOCK) {
-                //Creating new database instance
+                //Creating a new database instance.
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         MovieDatabase.class, MovieDatabase.DATABASE_NAME)
-                        //TODO Need to remove this after the database testing is complete.
-                        .allowMainThreadQueries()
                         .build();
             }
         }
