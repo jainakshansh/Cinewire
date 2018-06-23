@@ -9,4 +9,6 @@
     <color name="primary_popular">#E52F66</color>
     <color name="primary_top">#4FBD69</color>
     <color name="primary_favorites">#FF8008</color>
+
+    <color name="movie_favorite">#FBC02D</color>
 </resources>

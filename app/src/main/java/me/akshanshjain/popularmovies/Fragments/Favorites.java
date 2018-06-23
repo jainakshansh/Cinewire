@@ -16,9 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +30,6 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     private List<MovieItem> movieItemList;
     private RecyclerView moviesRecycler;
     private MovieAdapter movieAdapter;
-
-    private RequestQueue requestQueue;
-    private JsonObjectRequest jsonObjectRequest;
 
     private MovieDatabase movieDatabase;
 

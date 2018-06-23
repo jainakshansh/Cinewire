@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,10 +32,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import me.akshanshjain.popularmovies.Adapters.ReviewAdapter;
 import me.akshanshjain.popularmovies.Adapters.TrailerAdapter;
+import me.akshanshjain.popularmovies.Database.MovieDatabase;
+import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.Object.ReviewItem;
 import me.akshanshjain.popularmovies.Object.TrailerItem;
 
@@ -41,7 +46,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
 
-    private String movieID;
+    private String movieID, name, image, overview, release, rating;
 
     private ImageView moviePoster;
     private TextView movieName, movieOverview, movieRating, movieRelease, movieFavorite, trailerLabel, reviewLabel;
@@ -59,6 +64,9 @@ public class DetailActivity extends AppCompatActivity {
 
     private RequestQueue requestQueue;
     private JsonObjectRequest trailerRequest, reviewRequest;
+
+    private MovieDatabase movieDatabase;
+    private boolean isFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +88,11 @@ public class DetailActivity extends AppCompatActivity {
 
         //Getting the passed data from the intent.
         movieID = intent.getStringExtra("ID");
-        String name = intent.getStringExtra("NAME");
-        String image = intent.getStringExtra("IMAGE");
-        String overview = intent.getStringExtra("OVERVIEW");
-        String release = intent.getStringExtra("RELEASE");
-        String rating = intent.getStringExtra("VOTE_AVG");
+        name = intent.getStringExtra("NAME");
+        image = intent.getStringExtra("IMAGE");
+        overview = intent.getStringExtra("OVERVIEW");
+        release = intent.getStringExtra("RELEASE");
+        rating = intent.getStringExtra("VOTE_AVG");
 
         //Initializing the views from the XML.
         initViews();
@@ -133,6 +141,13 @@ public class DetailActivity extends AppCompatActivity {
         trailerSnapper.attachToRecyclerView(trailersRecycler);
 
         connectedState();
+
+        movieFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onFavoriteClicked();
+            }
+        });
     }
 
     private void connectedState() {
@@ -174,6 +189,8 @@ public class DetailActivity extends AppCompatActivity {
 
         REVIEW_URL = getApplicationContext().getResources().getString(R.string.reviewUrl);
         REVIEW_URL = REVIEW_URL.replace("{movieID}", movieID);
+
+        movieDatabase = MovieDatabase.getInstance(getApplicationContext());
     }
 
     private void extractFromJSON(JSONObject baseJsonResponse) {
@@ -251,6 +268,20 @@ public class DetailActivity extends AppCompatActivity {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null;
+    }
+
+    /*
+    Called when the favorite button is clicked.
+    It saves the details of the movie into local database for offline experience.
+     */
+    private void onFavoriteClicked() {
+    }
+
+    private void addMovieToDb() {
+
+    }
+
+    private void removeMovieFromDb() {
     }
 
     @Override
