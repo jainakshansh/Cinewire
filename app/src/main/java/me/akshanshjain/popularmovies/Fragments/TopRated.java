@@ -115,7 +115,6 @@ public class TopRated extends Fragment implements MovieAdapter.RecyclerClickList
 
         //Starting the activity with all the data passed to the next one.
         startActivity(detailedView);
-        getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     private int numberOfColumns() {

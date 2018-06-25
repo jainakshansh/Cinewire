@@ -1,9 +1,6 @@
 package me.akshanshjain.popularmovies.Fragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,6 +30,8 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     private MovieAdapter movieAdapter;
 
     private MovieDatabase movieDatabase;
+
+    private List<MovieItem> favoriteMovie;
 
     @Nullable
     @Override
@@ -75,7 +74,6 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
 
         //Starting the activity with all the data passed to the next one.
         startActivity(detailedView);
-        getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     private int numberOfColumns() {
@@ -89,19 +87,17 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
         return nColumns;
     }
 
-    private boolean isConnected() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null;
-    }
-
     @Override
     public void onResume() {
+        if (movieItemList.size() > 0) {
+            movieItemList.clear();
+        }
         super.onResume();
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                movieItemList = movieDatabase.movieDao().loadAllMovies();
+                favoriteMovie = movieDatabase.movieDao().loadAllMovies();
+                movieItemList.addAll(favoriteMovie);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

@@ -134,10 +134,11 @@ public class DetailActivity extends AppCompatActivity {
         reviewsRecycler.setNestedScrollingEnabled(false);
         reviewsRecycler.setAdapter(reviewAdapter);
 
-        //Centering the layout by using the inbuilt snap helper class.
+        //Automatic centering the view by using the inbuilt snap helper class.
         SnapHelper reviewSnapper = new LinearSnapHelper();
         reviewSnapper.attachToRecyclerView(reviewsRecycler);
 
+        //Centering the view by using the inbuilt snap helper class.
         SnapHelper trailerSnapper = new LinearSnapHelper();
         trailerSnapper.attachToRecyclerView(trailersRecycler);
 
@@ -279,13 +280,17 @@ public class DetailActivity extends AppCompatActivity {
             public void run() {
                 favoriteMovie = movieDatabase.movieDao().loadMovieById(movieID);
                 isFavorite = favoriteMovie != null;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Changing the background color of the text view with the state of isFavorite variable.
+                        if (isFavorite) {
+                            movieFavorite.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.movie_favorite));
+                        }
+                    }
+                });
             }
         });
-
-        //Changing the background color of the text view with the state of isFavorite variable.
-        if (isFavorite) {
-            movieFavorite.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.movie_favorite));
-        }
     }
 
     private void onFavoriteClicked() {
@@ -330,11 +335,5 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }
