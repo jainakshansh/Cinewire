@@ -1,7 +1,9 @@
 package me.akshanshjain.popularmovies.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -46,7 +48,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
-        ReviewItem reviewItem = reviewItemList.get(position);
+        final ReviewItem reviewItem = reviewItemList.get(position);
 
         holder.authorTv.setTypeface(qReg);
         holder.contentTv.setTypeface(qReg);

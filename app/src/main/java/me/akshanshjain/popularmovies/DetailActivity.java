@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,7 @@ import me.akshanshjain.popularmovies.Utils.AppExecutors;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private LinearLayout detailParent;
     private Toolbar toolbar;
 
     private String movieID, name, image, overview, release, rating;
@@ -142,7 +145,11 @@ public class DetailActivity extends AppCompatActivity {
         SnapHelper trailerSnapper = new LinearSnapHelper();
         trailerSnapper.attachToRecyclerView(trailersRecycler);
 
-        connectedState();
+        if (isConnected()) {
+            networkCalls();
+        } else {
+            callSnackbar();
+        }
 
         isMovieFavorite();
         movieFavorite.setOnClickListener(new View.OnClickListener() {
@@ -151,14 +158,6 @@ public class DetailActivity extends AppCompatActivity {
                 onFavoriteClicked();
             }
         });
-    }
-
-    private void connectedState() {
-        if (isConnected()) {
-            networkCalls();
-        } else {
-            connectedState();
-        }
     }
 
     private void initViews() {
@@ -194,6 +193,8 @@ public class DetailActivity extends AppCompatActivity {
         REVIEW_URL = REVIEW_URL.replace("{movieID}", movieID);
 
         movieDatabase = MovieDatabase.getInstance(getApplicationContext());
+
+        detailParent = findViewById(R.id.detail_parent);
     }
 
     private void extractFromJSON(JSONObject baseJsonResponse) {
@@ -261,16 +262,36 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         requestQueue.add(trailerRequest);
-        //trailerAdapter.notifyDataSetChanged();
+        trailerAdapter.notifyDataSetChanged();
 
         requestQueue.add(reviewRequest);
-        //reviewAdapter.notifyDataSetChanged();
+        reviewAdapter.notifyDataSetChanged();
     }
 
     private boolean isConnected() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null;
+    }
+
+    private void callSnackbar() {
+        Snackbar snackbar = Snackbar.make(detailParent, getResources().getString(R.string.connection_timed_out), Snackbar.LENGTH_INDEFINITE)
+                .setAction(getResources().getString(R.string.reload), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (isConnected()) {
+                            networkCalls();
+                        } else {
+                            callSnackbar();
+                        }
+                    }
+                });
+        snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.movie_favorite));
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+        TextView snackText = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        snackText.setTextColor(ContextCompat.getColor(this, R.color.materialBlack));
+        snackbar.show();
     }
 
     private void isMovieFavorite() {

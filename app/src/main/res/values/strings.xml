@@ -4,12 +4,12 @@
     <string name="toggle_view">Toggle View</string>
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
-    <string name="popularUrl">https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY_HERE]&amp;language=en-US</string>
-    <string name="topUrl">https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_KEY_HERE]&amp;language=en-US</string>
-    <string name="nowUrl">https://api.themoviedb.org/3/movie/now_playing?api_key=[YOUR_API_KEY_HERE]&amp;language=en-US</string>
+    <string name="popularUrl">https://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_HERE]&amp;language=en-US</string>
+    <string name="topUrl">https://api.themoviedb.org/3/movie/top_rated?api_key=[YOUR_API_HERE]&amp;language=en-US</string>
+    <string name="nowUrl">https://api.themoviedb.org/3/movie/now_playing?api_key=[YOUR_API_HERE]&amp;language=en-US</string>
     <string name="baseUrl">http://image.tmdb.org/t/p/w342</string>
-    <string name="reviewUrl">https://api.themoviedb.org/3/movie/{movieID}/reviews?api_key=[YOUR_API_KEY_HERE]&amp;language=en-US</string>
-    <string name="trailerUrl">https://api.themoviedb.org/3/movie/{movieID}/videos?api_key=[YOUR_API_KEY_HERE]&amp;language=en-US</string>
+    <string name="reviewUrl">https://api.themoviedb.org/3/movie/{movieID}/reviews?api_key=[YOUR_API_HERE]&amp;language=en-US</string>
+    <string name="trailerUrl">https://api.themoviedb.org/3/movie/{movieID}/videos?api_key=[YOUR_API_HERE]&amp;language=en-US</string>
     <string name="connection_timed_out">Connection Timed Out!</string>
     <string name="check_network_connection">Please check your internet connection!</string>
     <string name="fragment_menu_title">●</string>
@@ -17,4 +17,6 @@
     <string name="favourite">Favourite</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+    <string name="reload">RELOAD</string>
+    <string name="trailerBase">vnd.youtube:</string>
 </resources>

@@ -89,10 +89,10 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
 
     @Override
     public void onResume() {
+        super.onResume();
         if (movieItemList.size() > 0) {
             movieItemList.clear();
         }
-        super.onResume();
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
