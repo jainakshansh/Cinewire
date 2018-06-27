@@ -53,6 +53,11 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
     private RequestQueue requestQueue;
     private JsonObjectRequest jsonObjectRequest;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Nullable
     @Override

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -30,8 +31,15 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     private MovieAdapter movieAdapter;
 
     private MovieDatabase movieDatabase;
-
     private List<MovieItem> favoriteMovie;
+
+    private int lastScrolledState;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Nullable
     @Override
@@ -106,5 +114,11 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
                 });
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        lastScrolledState = ((LinearLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
     }
 }
