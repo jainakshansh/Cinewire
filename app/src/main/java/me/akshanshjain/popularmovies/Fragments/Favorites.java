@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,13 +34,7 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     private MovieDatabase movieDatabase;
     private List<MovieItem> favoriteMovie;
 
-    private int lastScrolledState;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
+    private static final String LIFECYCLE_CALLBACK_KEY = "callbacks";
 
     @Nullable
     @Override
@@ -119,6 +114,23 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        lastScrolledState = ((LinearLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
+        if (moviesRecycler.getLayoutManager() != null) {
+            int currentPos = ((LinearLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
+            outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
+                int lastVisiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+                if (lastVisiblePos < 0) {
+                    lastVisiblePos = 0;
+                }
+                moviesRecycler.smoothScrollToPosition(lastVisiblePos);
+            }
+        }
     }
 }

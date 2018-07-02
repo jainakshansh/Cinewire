@@ -14,8 +14,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,11 +55,7 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
     private RequestQueue requestQueue;
     private JsonObjectRequest jsonObjectRequest;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
+    private static final String LIFECYCLE_CALLBACK_KEY = "callbacks";
 
     @Nullable
     @Override
@@ -89,6 +87,16 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         //Checking if there is network connection and making requests if connected.
         if (isConnected()) {
             networkCalls();
+            //Checking and restoring for the previous saved instance state for better user experience.
+            if (savedInstanceState != null) {
+                if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
+                    int lastVisiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+                    if (lastVisiblePos < 0) {
+                        lastVisiblePos = 0;
+                    }
+                    moviesRecycler.smoothScrollToPosition(lastVisiblePos);
+                }
+            }
         } else {
             Toast.makeText(getContext(), getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
         }
@@ -177,5 +185,26 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
 
         requestQueue.add(jsonObjectRequest);
         movieAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int currentPos = ((LinearLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
+        outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
+                int lastVisiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+                if (lastVisiblePos < 0) {
+                    lastVisiblePos = 0;
+                }
+                moviesRecycler.smoothScrollToPosition(lastVisiblePos);
+            }
+        }
     }
 }
