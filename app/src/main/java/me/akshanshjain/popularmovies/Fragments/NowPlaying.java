@@ -51,6 +51,7 @@ public class NowPlaying extends Fragment implements MovieAdapter.RecyclerClickLi
     private RecyclerView moviesRecycler;
     private List<MovieItem> movieItemList;
     private MovieAdapter movieAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private RequestQueue requestQueue;
     private JsonObjectRequest jsonObjectRequest;
@@ -77,7 +78,7 @@ public class NowPlaying extends Fragment implements MovieAdapter.RecyclerClickLi
         moviesRecycler = view.findViewById(R.id.movies_recycler);
         movieAdapter = new MovieAdapter(this.getContext().getApplicationContext(), movieItemList, this);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this.getActivity(), numberOfColumns());
+        layoutManager = new GridLayoutManager(this.getActivity(), numberOfColumns());
         moviesRecycler.setLayoutManager(layoutManager);
         moviesRecycler.setItemAnimator(new DefaultItemAnimator());
         moviesRecycler.setNestedScrollingEnabled(false);
@@ -87,6 +88,13 @@ public class NowPlaying extends Fragment implements MovieAdapter.RecyclerClickLi
         //Checking if there is network connection and making requests if connected.
         if (isConnected()) {
             networkCalls();
+            //After the data has been loaded, we restore the state by scrolling recycler view to required position.
+            if (savedInstanceState != null) {
+                if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
+                    int visiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+                    moviesRecycler.smoothScrollToPosition(visiblePos);
+                }
+            }
         } else {
             Toast.makeText(getContext(), getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
         }
@@ -177,23 +185,9 @@ public class NowPlaying extends Fragment implements MovieAdapter.RecyclerClickLi
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (moviesRecycler.getLayoutManager() != null) {
-            int currentPos = ((LinearLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
-            outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
-        }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
-                int lastVisiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
-                if (lastVisiblePos < 0) {
-                    lastVisiblePos = 0;
-                }
-                moviesRecycler.smoothScrollToPosition(lastVisiblePos);
-            }
+        if (layoutManager != null) {
+            int currentPos = ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            outState.putString(LIFECYCLE_CALLBACK_KEY, "" + currentPos);
         }
     }
 }

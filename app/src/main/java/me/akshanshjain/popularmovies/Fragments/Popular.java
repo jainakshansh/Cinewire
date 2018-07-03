@@ -51,6 +51,7 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
     private RecyclerView moviesRecycler;
     private List<MovieItem> movieItemList;
     private MovieAdapter movieAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private RequestQueue requestQueue;
     private JsonObjectRequest jsonObjectRequest;
@@ -77,7 +78,7 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         moviesRecycler = view.findViewById(R.id.movies_recycler);
         movieAdapter = new MovieAdapter(this.getContext().getApplicationContext(), movieItemList, this);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this.getActivity(), numberOfColumns());
+        layoutManager = new GridLayoutManager(this.getActivity(), numberOfColumns());
         moviesRecycler.setLayoutManager(layoutManager);
         moviesRecycler.setItemAnimator(new DefaultItemAnimator());
         moviesRecycler.setNestedScrollingEnabled(false);
@@ -87,14 +88,11 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         //Checking if there is network connection and making requests if connected.
         if (isConnected()) {
             networkCalls();
-            //Checking and restoring for the previous saved instance state for better user experience.
+            //After the data has been loaded, we restore the state by scrolling recycler view to required position.
             if (savedInstanceState != null) {
                 if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
-                    int lastVisiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
-                    if (lastVisiblePos < 0) {
-                        lastVisiblePos = 0;
-                    }
-                    moviesRecycler.smoothScrollToPosition(lastVisiblePos);
+                    int visiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+                    moviesRecycler.smoothScrollToPosition(visiblePos);
                 }
             }
         } else {
@@ -190,21 +188,9 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        int currentPos = ((LinearLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
-        outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
-                int lastVisiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
-                if (lastVisiblePos < 0) {
-                    lastVisiblePos = 0;
-                }
-                moviesRecycler.smoothScrollToPosition(lastVisiblePos);
-            }
+        if (layoutManager != null) {
+            int currentPos = ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            outState.putString(LIFECYCLE_CALLBACK_KEY, "" + currentPos);
         }
     }
 }

@@ -1,5 +1,7 @@
 package me.akshanshjain.popularmovies.Fragments;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,7 +34,7 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     private MovieAdapter movieAdapter;
 
     private MovieDatabase movieDatabase;
-    private List<MovieItem> favoriteMovie;
+    private LiveData<List<MovieItem>> favoriteMovie;
 
     private static final String LIFECYCLE_CALLBACK_KEY = "callbacks";
 
@@ -56,6 +58,20 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
         moviesRecycler.setNestedScrollingEnabled(false);
         moviesRecycler.setHasFixedSize(true);
         moviesRecycler.setAdapter(movieAdapter);
+
+        //Reading the list of favorite movies from the database.
+        if (movieItemList.size() > 0) {
+            movieItemList.clear();
+        }
+        favoriteMovie = movieDatabase.movieDao().loadAllMovies();
+        favoriteMovie.observe(this.getActivity(), new Observer<List<MovieItem>>() {
+            @Override
+            public void onChanged(@Nullable List<MovieItem> movieItems) {
+                movieItemList.addAll(movieItems);
+                movieAdapter.notifyDataSetChanged();
+                Log.d("ADebug", "LD Calls!");
+            }
+        });
 
         return view;
     }
@@ -88,49 +104,5 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
         int nColumns = width / widthDivider;
         if (nColumns < 2) return 2;
         return nColumns;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (movieItemList.size() > 0) {
-            movieItemList.clear();
-        }
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                favoriteMovie = movieDatabase.movieDao().loadAllMovies();
-                movieItemList.addAll(favoriteMovie);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        movieAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (moviesRecycler.getLayoutManager() != null) {
-            int currentPos = ((LinearLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
-            outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
-        }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
-                int lastVisiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
-                if (lastVisiblePos < 0) {
-                    lastVisiblePos = 0;
-                }
-                moviesRecycler.smoothScrollToPosition(lastVisiblePos);
-            }
-        }
     }
 }
