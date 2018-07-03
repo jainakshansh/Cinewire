@@ -1,7 +1,7 @@
 package me.akshanshjain.popularmovies.Fragments;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -25,7 +24,7 @@ import me.akshanshjain.popularmovies.DetailActivity;
 import me.akshanshjain.popularmovies.Object.MovieItem;
 import me.akshanshjain.popularmovies.R;
 import me.akshanshjain.popularmovies.Adapters.MovieAdapter;
-import me.akshanshjain.popularmovies.Utils.AppExecutors;
+import me.akshanshjain.popularmovies.Utils.MovieViewModel;
 
 public class Favorites extends Fragment implements MovieAdapter.RecyclerClickListener {
 
@@ -34,7 +33,6 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     private MovieAdapter movieAdapter;
 
     private MovieDatabase movieDatabase;
-    private LiveData<List<MovieItem>> favoriteMovie;
 
     private static final String LIFECYCLE_CALLBACK_KEY = "callbacks";
 
@@ -59,19 +57,8 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
         moviesRecycler.setHasFixedSize(true);
         moviesRecycler.setAdapter(movieAdapter);
 
-        //Reading the list of favorite movies from the database.
-        if (movieItemList.size() > 0) {
-            movieItemList.clear();
-        }
-        favoriteMovie = movieDatabase.movieDao().loadAllMovies();
-        favoriteMovie.observe(this.getActivity(), new Observer<List<MovieItem>>() {
-            @Override
-            public void onChanged(@Nullable List<MovieItem> movieItems) {
-                movieItemList.addAll(movieItems);
-                movieAdapter.notifyDataSetChanged();
-                Log.d("ADebug", "LD Calls!");
-            }
-        });
+        //Reading movies from the database.
+        setupViewModel();
 
         return view;
     }
@@ -104,5 +91,37 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
         int nColumns = width / widthDivider;
         if (nColumns < 2) return 2;
         return nColumns;
+    }
+
+    private void setupViewModel() {
+        //Reading the list of favorite movies from the database.
+        if (movieItemList.size() > 0) {
+            movieItemList.clear();
+        }
+        MovieViewModel viewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+        viewModel.getMovieItemList().observe(this.getActivity(), new Observer<List<MovieItem>>() {
+            @Override
+            public void onChanged(@Nullable List<MovieItem> movieItems) {
+                movieItemList.addAll(movieItems);
+                movieAdapter.notifyDataSetChanged();
+                Log.d("ADebug", "LD Calls!");
+            }
+        });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
+            int visiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+            moviesRecycler.smoothScrollToPosition(visiblePos);
+        }
     }
 }

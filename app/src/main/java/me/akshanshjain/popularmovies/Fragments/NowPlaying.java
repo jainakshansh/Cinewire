@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -88,13 +89,6 @@ public class NowPlaying extends Fragment implements MovieAdapter.RecyclerClickLi
         //Checking if there is network connection and making requests if connected.
         if (isConnected()) {
             networkCalls();
-            //After the data has been loaded, we restore the state by scrolling recycler view to required position.
-            if (savedInstanceState != null) {
-                if (savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
-                    int visiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
-                    moviesRecycler.smoothScrollToPosition(visiblePos);
-                }
-            }
         } else {
             Toast.makeText(getContext(), getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
         }
@@ -185,9 +179,16 @@ public class NowPlaying extends Fragment implements MovieAdapter.RecyclerClickLi
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (layoutManager != null) {
-            int currentPos = ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
-            outState.putString(LIFECYCLE_CALLBACK_KEY, "" + currentPos);
+        int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
+            int visiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+            moviesRecycler.smoothScrollToPosition(visiblePos);
         }
     }
 }

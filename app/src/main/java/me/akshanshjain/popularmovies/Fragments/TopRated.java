@@ -185,9 +185,16 @@ public class TopRated extends Fragment implements MovieAdapter.RecyclerClickList
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (layoutManager != null) {
-            int currentPos = ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
-            outState.putString(LIFECYCLE_CALLBACK_KEY, "" + currentPos);
+        int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
+            int visiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+            moviesRecycler.smoothScrollToPosition(visiblePos);
         }
     }
 }
