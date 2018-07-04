@@ -103,6 +103,9 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
                 public void run() {
                     if (state != null && state.containsKey(LIFECYCLE_CALLBACK_KEY)) {
                         int visiblePos = state.getInt(LIFECYCLE_CALLBACK_KEY);
+                        if (visiblePos < 0) {
+                            visiblePos = 0;
+                        }
                         moviesRecycler.smoothScrollToPosition(visiblePos);
                     }
                 }
@@ -202,7 +205,6 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         super.onSaveInstanceState(outState);
         int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
         outState.putInt(LIFECYCLE_CALLBACK_KEY, currentPos);
-        Log.d("ADebug", "Store: " + currentPos);
     }
 
     @Override

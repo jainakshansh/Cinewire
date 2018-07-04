@@ -127,6 +127,9 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
             int visiblePos = savedInstanceState.getInt(LIFECYCLE_CALLBACK_KEY);
+            if (visiblePos < 0) {
+                visiblePos = 0;
+            }
             moviesRecycler.smoothScrollToPosition(visiblePos);
         }
     }

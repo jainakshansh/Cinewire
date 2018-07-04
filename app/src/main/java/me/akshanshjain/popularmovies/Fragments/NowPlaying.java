@@ -103,6 +103,9 @@ public class NowPlaying extends Fragment implements MovieAdapter.RecyclerClickLi
                 public void run() {
                     if (state != null && state.containsKey(LIFECYCLE_CALLBACK_KEY)) {
                         int visiblePos = state.getInt(LIFECYCLE_CALLBACK_KEY);
+                        if (visiblePos < 0) {
+                            visiblePos = 0;
+                        }
                         moviesRecycler.smoothScrollToPosition(visiblePos);
                     }
                 }
@@ -199,7 +202,6 @@ public class NowPlaying extends Fragment implements MovieAdapter.RecyclerClickLi
         super.onSaveInstanceState(outState);
         int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
         outState.putInt(LIFECYCLE_CALLBACK_KEY, currentPos);
-        Log.d("ADebug", "Store: " + currentPos);
     }
 
     @Override

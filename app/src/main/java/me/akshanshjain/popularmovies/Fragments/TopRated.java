@@ -103,6 +103,9 @@ public class TopRated extends Fragment implements MovieAdapter.RecyclerClickList
                 public void run() {
                     if (state != null && state.containsKey(LIFECYCLE_CALLBACK_KEY)) {
                         int visiblePos = state.getInt(LIFECYCLE_CALLBACK_KEY);
+                        if (visiblePos < 0) {
+                            visiblePos = 0;
+                        }
                         moviesRecycler.smoothScrollToPosition(visiblePos);
                     }
                 }
@@ -199,5 +202,10 @@ public class TopRated extends Fragment implements MovieAdapter.RecyclerClickList
         super.onSaveInstanceState(outState);
         int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
         outState.putInt(LIFECYCLE_CALLBACK_KEY, currentPos);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
     }
 }
