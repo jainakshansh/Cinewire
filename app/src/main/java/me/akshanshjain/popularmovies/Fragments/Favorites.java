@@ -36,6 +36,12 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
 
     private static final String LIFECYCLE_CALLBACK_KEY = "callbacks";
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,16 +101,16 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
 
     private void setupViewModel() {
         //Reading the list of favorite movies from the database.
-        if (movieItemList.size() > 0) {
-            movieItemList.clear();
-        }
         MovieViewModel viewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
         viewModel.getMovieItemList().observe(this.getActivity(), new Observer<List<MovieItem>>() {
             @Override
             public void onChanged(@Nullable List<MovieItem> movieItems) {
+                if (movieItemList.size() > 0) {
+                    movieItemList.clear();
+                }
                 movieItemList.addAll(movieItems);
                 movieAdapter.notifyDataSetChanged();
-                Log.d("ADebug", "LD Calls!");
+                Log.d("ADebug", "LiveD Calls!");
             }
         });
     }
@@ -112,15 +118,15 @@ public class Favorites extends Fragment implements MovieAdapter.RecyclerClickLis
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-        outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
+        int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
+        outState.putInt(LIFECYCLE_CALLBACK_KEY, currentPos);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
-            int visiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
+            int visiblePos = savedInstanceState.getInt(LIFECYCLE_CALLBACK_KEY);
             moviesRecycler.smoothScrollToPosition(visiblePos);
         }
     }

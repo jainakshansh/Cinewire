@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -58,6 +59,13 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
     private JsonObjectRequest jsonObjectRequest;
 
     private static final String LIFECYCLE_CALLBACK_KEY = "callbacks";
+    private Bundle state;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Nullable
     @Override
@@ -89,6 +97,16 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
         //Checking if there is network connection and making requests if connected.
         if (isConnected()) {
             networkCalls();
+            state = savedInstanceState;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (state != null && state.containsKey(LIFECYCLE_CALLBACK_KEY)) {
+                        int visiblePos = state.getInt(LIFECYCLE_CALLBACK_KEY);
+                        moviesRecycler.smoothScrollToPosition(visiblePos);
+                    }
+                }
+            }, 500);
         } else {
             Toast.makeText(getContext(), getResources().getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show();
         }
@@ -182,16 +200,13 @@ public class Popular extends Fragment implements MovieAdapter.RecyclerClickListe
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-        outState.putString(LIFECYCLE_CALLBACK_KEY, String.valueOf(currentPos));
+        int currentPos = ((GridLayoutManager) moviesRecycler.getLayoutManager()).findFirstVisibleItemPosition();
+        outState.putInt(LIFECYCLE_CALLBACK_KEY, currentPos);
+        Log.d("ADebug", "Store: " + currentPos);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey(LIFECYCLE_CALLBACK_KEY)) {
-            int visiblePos = Integer.parseInt(savedInstanceState.getString(LIFECYCLE_CALLBACK_KEY));
-            moviesRecycler.smoothScrollToPosition(visiblePos);
-        }
     }
 }
